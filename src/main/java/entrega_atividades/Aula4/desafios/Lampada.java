@@ -8,7 +8,7 @@ public class Lampada {
 
     private int intensidade;
 
-    public Lampada(String comodo, boolean ligada, int intensidade) {
+    public Lampada(String comodo) {
         this.comodo = comodo;
         this.ligada = false;
         this.intensidade = 0;

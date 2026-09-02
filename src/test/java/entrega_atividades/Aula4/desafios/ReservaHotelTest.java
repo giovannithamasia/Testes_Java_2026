@@ -8,26 +8,13 @@ public class ReservaHotelTest {
 
     @Test
     void reservaRecemCriadaDeveTerDadosEEstadoInicialCorretos() {
-        ReservaHotel reserva = new ReservaHotel(
-                "Ana Silva",
-                3,
-                250.0
-        );
+        ReservaHotel reserva = new ReservaHotel("Paulo",
+                10,10);
 
         assertAll(
-                () -> assertEquals(
-                        "Ana Silva",
-                        reserva.getHospede()
-                ),
-                () -> assertEquals(
-                        3,
-                        reserva.getQuantidadeDiarias()
-                ),
-                () -> assertEquals(
-                        250.0,
-                        reserva.getValorDiaria(),
-                        0.001
-                ),
+                () -> assertEquals("Paulo",reserva.getHospede()),
+                () -> assertEquals(10,reserva.getQuantidadeDiarias()),
+                () -> assertEquals(10,reserva.getValorDiaria()),
                 () -> assertFalse(reserva.isConfirmada()),
                 () -> assertNull(reserva.getCodigoConfirmacao())
         );
@@ -35,18 +22,12 @@ public class ReservaHotelTest {
 
     @Test
     void calcularTotalDeveMultiplicarDiariasPeloValor() {
-        // Arrange
-        ReservaHotel reserva = new ReservaHotel(
-                "Bruno Costa",
-                4,
-                180.0
-        );
+        ReservaHotel reserva = new ReservaHotel("Paulo",
+                10,10);
 
-        // Act
-        double obtido = reserva.calcularTotal();
+        double resultado = reserva.calcularTotal();
 
-        // Assert
-        assertEquals(720.0, obtido, 0.001);
+        assertEquals(100,resultado,0.001);
     }
 
     @Test
@@ -78,141 +59,113 @@ public class ReservaHotelTest {
     void hospedeNuloDeveLancarExcecao() {
         IllegalArgumentException excecao = assertThrows(
                 IllegalArgumentException.class,
-                () -> new ReservaHotel(null, 2, 200.0)
+                () -> new ReservaHotel(null,2,2)
         );
 
-        assertEquals(
-                "O hóspede é obrigatório.",
-                excecao.getMessage()
-        );
+        assertEquals("O hóspede é obrigatório.",
+                excecao.getMessage());
     }
 
     @Test
     void hospedeEmBrancoDeveLancarExcecao() {
         IllegalArgumentException excecao = assertThrows(
                 IllegalArgumentException.class,
-                () -> new ReservaHotel("   ", 2, 200.0)
+                () -> new ReservaHotel("",2,2)
         );
 
-        assertEquals(
-                "O hóspede é obrigatório.",
-                excecao.getMessage()
-        );
+        assertEquals("O hóspede é obrigatório.",
+                excecao.getMessage());
     }
 
     @Test
     void quantidadeZeroDeveLancarExcecao() {
         IllegalArgumentException excecao = assertThrows(
                 IllegalArgumentException.class,
-                () -> new ReservaHotel("Diego", 0, 200.0)
+                () -> new ReservaHotel("paulo",0,2)
         );
 
-        assertEquals(
-                "A quantidade de diárias deve ser maior que zero.",
-                excecao.getMessage()
-        );
+        assertEquals("A quantidade de diárias deve ser maior que zero.",
+                excecao.getMessage());
     }
 
     @Test
     void quantidadeNegativaDeveLancarExcecao() {
         IllegalArgumentException excecao = assertThrows(
                 IllegalArgumentException.class,
-                () -> new ReservaHotel("Diego", -1, 200.0)
+                () -> new ReservaHotel("paulo",-10,2)
         );
 
-        assertEquals(
-                "A quantidade de diárias deve ser maior que zero.",
-                excecao.getMessage()
-        );
+        assertEquals("A quantidade de diárias deve ser maior que zero.",
+                excecao.getMessage());
     }
 
     @Test
     void valorZeroDeveLancarExcecao() {
         IllegalArgumentException excecao = assertThrows(
                 IllegalArgumentException.class,
-                () -> new ReservaHotel("Eva", 2, 0.0)
+                () -> new ReservaHotel("paulo",10,0.0)
         );
 
-        assertEquals(
-                "O valor da diária deve ser maior que zero.",
-                excecao.getMessage()
-        );
+        assertEquals("O valor da diária deve ser maior que zero.",
+                excecao.getMessage());
     }
 
     @Test
     void valorNegativoDeveLancarExcecao() {
         IllegalArgumentException excecao = assertThrows(
                 IllegalArgumentException.class,
-                () -> new ReservaHotel("Eva", 2, -1.0)
+                () -> new ReservaHotel("paulo",10,-10.0)
         );
 
-        assertEquals(
-                "O valor da diária deve ser maior que zero.",
-                excecao.getMessage()
-        );
+        assertEquals("O valor da diária deve ser maior que zero.",
+                excecao.getMessage());
     }
 
     @Test
     void codigoNuloDeveLancarExcecao() {
-        ReservaHotel reserva = new ReservaHotel(
-                "Fábio",
-                2,
-                150.0
-        );
+        ReservaHotel reserva = new ReservaHotel("Paulo",
+                10,10);
 
         IllegalArgumentException excecao = assertThrows(
                 IllegalArgumentException.class,
                 () -> reserva.confirmar(null)
         );
 
-        assertEquals(
-                "O código de confirmação é obrigatório.",
-                excecao.getMessage()
-        );
+        assertEquals("O código de confirmação é obrigatório.",
+                excecao.getMessage());
     }
 
     @Test
     void codigoEmBrancoDeveLancarExcecao() {
-        ReservaHotel reserva = new ReservaHotel(
-                "Fábio",
-                2,
-                150.0
-        );
+        ReservaHotel reserva = new ReservaHotel("Paulo",
+                10,10);
 
         IllegalArgumentException excecao = assertThrows(
                 IllegalArgumentException.class,
-                () -> reserva.confirmar("   ")
+                () -> reserva.confirmar("")
         );
 
-        assertEquals(
-                "O código de confirmação é obrigatório.",
-                excecao.getMessage()
-        );
+        assertEquals("O código de confirmação é obrigatório.",
+                excecao.getMessage());
     }
 
     @Test
     void confirmarDuasVezesDeveLancarExcecao() {
-        ReservaHotel reserva = new ReservaHotel(
-                "Gabriela",
-                5,
-                220.0
-        );
-        reserva.confirmar("RES-001");
+        ReservaHotel reserva = new ReservaHotel("Paulo",
+                10,10);
+
+        reserva.confirmar("AUDTT-1010");
 
         IllegalStateException excecao = assertThrows(
                 IllegalStateException.class,
-                () -> reserva.confirmar("RES-002")
+                () -> reserva.confirmar("TTT-1010")
         );
 
         assertAll(
-                () -> assertEquals(
-                        "A reserva já está confirmada.",
-                        excecao.getMessage()
-                ),
-                () -> assertEquals(
-                        "RES-001",
-                        reserva.getCodigoConfirmacao()
-                )
+                () -> assertEquals("A reserva já está confirmada.",
+                excecao.getMessage()),
+                        () -> assertEquals("AUDTT-1010",
+                                reserva.getCodigoConfirmacao())
         );
     }
 }

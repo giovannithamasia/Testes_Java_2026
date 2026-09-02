@@ -52,9 +52,6 @@ public class LampadaTest {
         // Act: ligue a lâmpada.
         lampada.ligar();
 
-        // Assert: verifique o estado e a intensidade.
-        System.out.println(lampada);
-
         lampada.desligar();
 
         assertAll(
