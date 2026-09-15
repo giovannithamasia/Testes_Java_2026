@@ -61,7 +61,6 @@ class DescontoTest {
     @Test
     @Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
     void calcularDeveTerminarRapidamente() {
-        // O teste passa se a chamada terminar antes do limite.
         Desconto.calcular(250.0, 15);
     }
 

@@ -1,7 +1,7 @@
 package entrega_atividades.Aula5;
 
 public final class Desconto {
-    // Construtor privado: a classe oferece apenas métodos estáticos.
+
     private Desconto() { }
 
     public static double calcular(double preco, int percentual) {
