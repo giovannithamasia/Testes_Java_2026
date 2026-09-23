@@ -7,6 +7,6 @@ public class PagamentoCartao extends Pagamento{
 
     @Override
     public double calcularTaxa() {
-        return getValor() - 0.025;
+        return this.getValor() * 0.025;
     }
 }

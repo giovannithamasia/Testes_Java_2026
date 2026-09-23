@@ -7,6 +7,6 @@ public class PagamentoPix extends Pagamento{
 
     @Override
     public double calcularTaxa() {
-        return getValor();
+        return 0.0;
     }
 }
