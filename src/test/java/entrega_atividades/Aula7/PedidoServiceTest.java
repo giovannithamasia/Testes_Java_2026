@@ -15,6 +15,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PedidoServiceTest {
 
+    // Criamos Mocks do Mockito para uso específico no Teste 5
     @Mock
     private PagamentoGateway pagamentoGatewayMock;
 
@@ -27,11 +28,14 @@ class PedidoServiceTest {
     @Test
     @DisplayName("1. Dummy: Testa recusa de pagamento sem precisar usar o EmailService")
     void testDummy() {
-        // Stub do gateway para recusar
+        // [EXPLICAÇÃO TÉCNICA - LAMBDA (id, valor) -> false]:
+        // É um STUB simplificado.
+        // Diz: "Não importa o ID ou valor, recuse o pagamento (retorne false)".
         PagamentoGateway gatewayRecusa = (id, valor) -> false;
+
         PedidoRepository repoIgnorado = new PedidoRepositoryFake();
 
-        // Dummy: passado apenas para preencher o construtor, não é acionado quando o pagamento falha
+        // Passamos o DUMMY. Ele só está preenchendo o construtor.
         EmailService dummyEmail = new DummyEmailService();
 
         PedidoService service = new PedidoService(gatewayRecusa, repoIgnorado, dummyEmail);
@@ -39,6 +43,9 @@ class PedidoServiceTest {
 
         boolean resultado = service.finalizarPedido(pedido);
 
+        // Asserções: O resultado deve ser falso e o pedido continua não pago.
+        // Se o sistema tentasse mandar e-mail,
+        // o Dummy lançaria erro e o teste quebraria.
         assertFalse(resultado);
         assertFalse(pedido.isPago());
     }
@@ -46,7 +53,8 @@ class PedidoServiceTest {
     @Test
     @DisplayName("2. Stub: Resposta fixa para simular Gateway de Pagamento Aprovado")
     void testStub() {
-        // Stub manual retornando resposta fixa "true"
+        // STUB MANUAL: Retorna SEMPRE 'true'
+        // (Pagamento aprovado) para forçar o caminho de sucesso.
         PagamentoGateway stubGatewayAprovado = (id, valor) -> true;
 
         EmailServiceSpy spyEmail = new EmailServiceSpy();
@@ -57,6 +65,7 @@ class PedidoServiceTest {
 
         boolean resultado = service.finalizarPedido(pedido);
 
+        // Garante que o fluxo de sucesso funcionou
         assertTrue(resultado);
         assertTrue(pedido.isPago());
     }
@@ -73,7 +82,10 @@ class PedidoServiceTest {
 
         service.finalizarPedido(pedido);
 
-        // Verifica se o objeto realmente persistiu no estado da Fake
+        // [PARA A APRESENTAÇÃO]: "Validamos o FAKE buscando o pedido no
+        // HashMap em memória.
+        // Provamos que o repositório realmente salvou o pedido
+        // P03 com valor 500.0."
         Pedido pedidoSalvo = fakeRepo.buscarPorId("P03");
         assertNotNull(pedidoSalvo);
         assertEquals(500.0, pedidoSalvo.getValorTotal());
@@ -84,14 +96,17 @@ class PedidoServiceTest {
     void testSpy() {
         PagamentoGateway stubGateway = (id, valor) -> true;
         PedidoRepositoryFake fakeRepo = new PedidoRepositoryFake();
-        EmailServiceSpy spyEmail = new EmailServiceSpy(); // Spy observador
+        EmailServiceSpy spyEmail = new EmailServiceSpy(); // Objeto Espião
 
         PedidoService service = new PedidoService(stubGateway, fakeRepo, spyEmail);
         Pedido pedido = new Pedido("P04", 150.0, "spy@email.com");
 
         service.finalizarPedido(pedido);
 
-        // Verificação do estado registrado no Spy
+        // [PARA A APRESENTAÇÃO]: "Consultamos o SPY para confirmar
+        // que exatamente 1 e-mail
+        // foi registrado na lista interna
+        // dele para o endereço 'spy@email.com'."
         assertEquals(1, spyEmail.getQuantidadeEmailsEnviados());
         assertTrue(spyEmail.contemEmailPara("spy@email.com"));
     }
@@ -99,7 +114,8 @@ class PedidoServiceTest {
     @Test
     @DisplayName("5. Mock: Verifica se nenhuma interacao ocorreu se o pagamento falhar")
     void testMockComMockito() {
-        // Configuração das expectativas do Mockito
+        // [EXPLICAÇÃO TÉCNICA - when(...).thenReturn(...)]:
+        // Configura o Mock para agir como um Stub: quando chamar cobrar com estes dados, devolva 'false'.
         when(pagamentoGatewayMock.cobrar("P05", 300.0)).thenReturn(false);
 
         PedidoService service = new PedidoService(pagamentoGatewayMock, pedidoRepositoryMock, emailServiceMock);
@@ -108,7 +124,18 @@ class PedidoServiceTest {
         boolean resultado = service.finalizarPedido(pedido);
 
         assertFalse(resultado);
-        // Verificação comportamental (Mocks): Garante que NENHUM e-mail foi enviado e NENHUM pedido foi salvo
+
+
+        // [EXPLICAÇÃO TÉCNICA - verify(), never(), any() e anyString()]:
+        // - verify(): Método do Mockito que checa COMPORTAMENTO
+        //  (se métodos foram chamados ou não).
+        // - never(): Garante que a quantidade de chamadas foi ZERO.
+        // - any() e anyString(): Curingas (Matchers).
+        // Significam "qualquer objeto" e "qualquer texto".
+        // [PARA A APRESENTAÇÃO]: "Aqui o MOCK valida a
+        // regra de segurança: como o pagamento falhou,
+        // garantimos que o sistema NUNCA tentou salvar no banco e
+        // NUNCA tentou enviar e-mail."
         verify(pedidoRepositoryMock, never()).salvar(any());
         verify(emailServiceMock, never()).enviarEmail(anyString(), anyString());
     }
